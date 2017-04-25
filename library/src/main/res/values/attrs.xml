@@ -4,28 +4,30 @@
     <attr format="integer" name="pv_progressMode">
         <enum name="determinate" value="0x00000000" />
         <enum name="indeterminate" value="0x00000001" />
-        <enum name="buffer" value="0x00000002" />
-        <enum name="query" value="0x00000003" />
     </attr>
 
     <declare-styleable name="CircularProgressDrawable">
-        <attr format="reference|dimension" name="cpd_padding" />
-        <attr format="reference|integer" name="cpd_initialAngle" />
-        <attr format="reference|integer" name="cpd_maxSweepAngle" />
-        <attr format="reference|integer" name="cpd_minSweepAngle" />
-        <attr format="reference|dimension" name="cpd_strokeSize" />
+        <attr format="boolean" name="cpd_automaticallyRestart" />
+        <attr format="boolean" name="cpd_keepDeterminateProgress" />
+        <attr format="boolean" name="cpd_reverse" />
+        <attr format="boolean" name="cpd_inverted" />
+        <attr format="float" name="cpd_inStepPercent" />
+        <attr format="color" name="cpd_circleBackgroundColor" />
+        <attr format="reference" name="cpd_inStepColors" />
+        <attr format="reference" name="cpd_strokeColors" />
+        <attr format="reference" name="cpd_transformInterpolator" />
         <attr format="reference|color" name="cpd_strokeColor" />
         <attr format="reference|color" name="cpd_strokeSecondaryColor" />
-        <attr format="reference" name="cpd_strokeColors" />
-        <attr format="boolean" name="cpd_reverse" />
+        <attr format="reference|dimension" name="cpd_padding" />
+        <attr format="reference|dimension" name="cpd_strokeSize" />
+        <attr format="reference|integer" name="cpd_inAnimDuration" />
+        <attr format="reference|integer" name="cpd_initialAngle" />
+        <attr format="reference|integer" name="cpd_keepDuration" />
+        <attr format="reference|integer" name="cpd_maxSweepAngle" />
+        <attr format="reference|integer" name="cpd_minSweepAngle" />
+        <attr format="reference|integer" name="cpd_outAnimDuration" />
         <attr format="reference|integer" name="cpd_rotateDuration" />
         <attr format="reference|integer" name="cpd_transformDuration" />
-        <attr format="reference|integer" name="cpd_keepDuration" />
-        <attr format="reference" name="cpd_transformInterpolator" />
-        <attr format="reference|integer" name="cpd_inAnimDuration" />
-        <attr format="reference|integer" name="cpd_outAnimDuration" />
-        <attr format="reference" name="cpd_inStepColors" />
-        <attr format="float" name="cpd_inStepPercent" />
         <attr name="pv_progressMode" />
     </declare-styleable>
 

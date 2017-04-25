@@ -18,7 +18,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 public class CircularProgressDrawable extends Drawable implements Animatable {
-
   private long mLastUpdateTime;
   private long mLastProgressStateTime;
   private long mLastRunStateTime;
@@ -40,6 +39,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
   private static final int RUN_STATE_STOPPING = 4;
 
   private Paint mPaint;
+  private Paint mCircleBackgroundPaint;
   private RectF mRect;
   private float mStartAngle;
   private float mSweepAngle;
@@ -60,13 +60,19 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
   private int mInAnimationDuration;
   private int mOutAnimationDuration;
   private int mProgressMode;
+  private boolean mKeepDeterminateProgress;
+  private boolean mAutomaticallyRestart;
+  private boolean mInverted;
+  private int mCircleBackgraondColor;
   private Interpolator mTransformInterpolator;
 
   private CircularProgressDrawable(int padding, float initialAngle, float maxSweepAngle, float minSweepAngle,
                                    int strokeSize, int[] strokeColors, boolean reverse,
                                    int rotateDuration, int transformDuration, int keepDuration,
                                    Interpolator transformInterpolator, int progressMode, int inAnimDuration,
-                                   float inStepPercent, int[] inStepColors, int outAnimDuration) {
+                                   float inStepPercent, int[] inStepColors, int outAnimDuration,
+                                   boolean keepDeterminateProgress, boolean automaticallyRestart,
+                                   int circleBackgroundColor, boolean inverted) {
     mPadding = padding;
     mInitialAngle = initialAngle;
     mMaxSweepAngle = maxSweepAngle;
@@ -79,6 +85,10 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     mKeepDuration = keepDuration;
     mTransformInterpolator = transformInterpolator;
     mProgressMode = progressMode;
+    mKeepDeterminateProgress = keepDeterminateProgress;
+    mAutomaticallyRestart = automaticallyRestart;
+    mInverted = inverted;
+    mCircleBackgraondColor = circleBackgroundColor;
     mInAnimationDuration = inAnimDuration;
     mInStepPercent = inStepPercent;
     mInColors = inStepColors;
@@ -88,6 +98,11 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     mPaint.setAntiAlias(true);
     mPaint.setStrokeCap(Paint.Cap.ROUND);
     mPaint.setStrokeJoin(Paint.Join.ROUND);
+    mCircleBackgroundPaint = new Paint();
+    mCircleBackgroundPaint.setAntiAlias(true);
+    mCircleBackgroundPaint.setStrokeCap(Paint.Cap.ROUND);
+    mCircleBackgroundPaint.setStrokeJoin(Paint.Join.ROUND);
+    mCircleBackgroundPaint.setColor(circleBackgroundColor);
 
     mRect = new RectF();
   }
@@ -189,16 +204,26 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       mPaint.setStrokeWidth(mStrokeSize);
       mPaint.setStyle(Paint.Style.STROKE);
       mPaint.setColor(getIndeterminateStrokeColor());
-
-      canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
+      mCircleBackgroundPaint.setStrokeWidth(mStrokeSize);
+      mCircleBackgroundPaint.setStyle(Paint.Style.STROKE);
+      canvas.drawArc(mRect, 0, 360, false, mCircleBackgroundPaint);
+      if (mProgressMode == ProgressView.MODE_DETERMINATE && mKeepDeterminateProgress) {
+        float angle = mStartAngle;
+        if (mInverted) {
+          angle = mStartAngle < 0 ? 360 + mStartAngle : mStartAngle - 360;
+        }
+        canvas.drawArc(mRect, 270, angle, false, mPaint);
+      } else {
+        canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
+      }
     }
   }
 
-  public void setmStrokeSize(int mStrokeSize) {
+  public void setStrokeSize(int mStrokeSize) {
     this.mStrokeSize = mStrokeSize;
   }
 
-  public void setmStrokeColors(int[] mStrokeColors) {
+  public void setStrokeColors(int[] mStrokeColors) {
     this.mStrokeColors = mStrokeColors;
   }
 
@@ -306,14 +331,16 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
   private void updateDeterminate() {
     long curTime = SystemClock.uptimeMillis();
-    float rotateOffset = (curTime - mLastUpdateTime) * 360f / mRotateDuration;
+    float rotateOffset = (((curTime - mLastUpdateTime) * 360f) / mRotateDuration);
     if (mReverse) {
       rotateOffset = -rotateOffset;
     }
     mLastUpdateTime = curTime;
 
     mStartAngle += rotateOffset;
-
+    if (mAutomaticallyRestart) {
+      mStartAngle %= 360;
+    }
     if (mRunState == RUN_STATE_STARTING) {
       if (curTime - mLastRunStateTime > mInAnimationDuration) {
         mRunState = RUN_STATE_RUNNING;
@@ -444,6 +471,10 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     private int[] mInColors;
     private int mInAnimationDuration;
     private int mOutAnimationDuration;
+    private boolean mKeepDeterminateProgress;
+    private int mCircleBackgroundColor;
+    private boolean mAutomaticallyRestart;
+    private boolean mInverted;
 
     public Builder(Context context, int defStyleRes) {
       this(context, null, 0, defStyleRes);
@@ -470,6 +501,10 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       }
       reverse(a.getBoolean(R.styleable.CircularProgressDrawable_cpd_reverse, false));
       rotateDuration(a.getInteger(R.styleable.CircularProgressDrawable_cpd_rotateDuration, context.getResources().getInteger(android.R.integer.config_longAnimTime)));
+      keepDeterminateProgress(a.getBoolean(R.styleable.CircularProgressDrawable_cpd_keepDeterminateProgress, true));
+      automaticallyRestart(a.getBoolean(R.styleable.CircularProgressDrawable_cpd_automaticallyRestart, false));
+      inverted(a.getBoolean(R.styleable.CircularProgressDrawable_cpd_inverted, false));
+      circleBackgraondColor(a.getColor(R.styleable.CircularProgressDrawable_cpd_circleBackgroundColor, 0));
       transformDuration(a.getInteger(R.styleable.CircularProgressDrawable_cpd_transformDuration, context.getResources().getInteger(android.R.integer.config_mediumAnimTime)));
       keepDuration(a.getInteger(R.styleable.CircularProgressDrawable_cpd_keepDuration, context.getResources().getInteger(android.R.integer.config_shortAnimTime)));
       if ((resId = a.getResourceId(R.styleable.CircularProgressDrawable_cpd_transformInterpolator, 0)) != 0) {
@@ -506,7 +541,8 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
       return new CircularProgressDrawable(mPadding, mInitialAngle, mMaxSweepAngle, mMinSweepAngle, mStrokeSize,
           mStrokeColors, mReverse, mRotateDuration, mTransformDuration, mKeepDuration,
-          mTransformInterpolator, mProgressMode, mInAnimationDuration, mInStepPercent, mInColors, mOutAnimationDuration);
+          mTransformInterpolator, mProgressMode, mInAnimationDuration, mInStepPercent, mInColors, mOutAnimationDuration,
+          mKeepDeterminateProgress, mAutomaticallyRestart, mCircleBackgroundColor, mInverted);
     }
 
     public Builder padding(int padding) {
@@ -521,6 +557,25 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
     public Builder maxSweepAngle(float angle) {
       mMaxSweepAngle = angle;
+      return this;
+    }
+
+    private void inverted(boolean inverted) {
+      mInverted = inverted;
+    }
+
+    public Builder keepDeterminateProgress(boolean keepDeterminateProgress) {
+      mKeepDeterminateProgress = keepDeterminateProgress;
+      return this;
+    }
+
+    public Builder circleBackgraondColor(int circleBackgroundColor) {
+      mCircleBackgroundColor = circleBackgroundColor;
+      return this;
+    }
+
+    public Builder automaticallyRestart(boolean automaticallyRestart) {
+      mAutomaticallyRestart = automaticallyRestart;
       return this;
     }
 

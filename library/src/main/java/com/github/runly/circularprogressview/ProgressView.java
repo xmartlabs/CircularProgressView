@@ -16,19 +16,19 @@ public class ProgressView extends View {
 
   public ProgressView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init(context);
+    init(context, attrs);
   }
 
-  protected void init(Context context) {
-    applyStyle(context);
+  protected void init(Context context, AttributeSet attrs) {
+    applyStyle(context, attrs);
   }
 
   /**
    * set progress's style
    */
-  protected void applyStyle(Context context) {
-    int mProgressId = R.style.CircularProgress;
-    circularProgressDrawable = new CircularProgressDrawable.Builder(context, mProgressId).build();
+  protected void applyStyle(Context context, AttributeSet attrs) {
+    circularProgressDrawable = new CircularProgressDrawable.Builder(context, attrs, 0, R.style.CircularProgress)
+        .build();
     ViewUtil.setBackground(this, circularProgressDrawable);
   }
 
@@ -44,7 +44,7 @@ public class ProgressView extends View {
    * set the stroke size with px
    */
   public void setStrokeSizePx(int px) {
-    getCircularProgressDrawable().setmStrokeSize(px);
+    getCircularProgressDrawable().setStrokeSize(px);
   }
 
   /**
@@ -52,14 +52,14 @@ public class ProgressView extends View {
    */
   public void setStrokeSizeDp(Context context, float dp) {
     int px = dipToPixels(context, dp);
-    getCircularProgressDrawable().setmStrokeSize(px);
+    getCircularProgressDrawable().setStrokeSize(px);
   }
 
   /**
    * set the colors with int[]
    */
   public void setStrokeColors(int[] strokeColors) {
-    getCircularProgressDrawable().setmStrokeColors(strokeColors);
+    getCircularProgressDrawable().setStrokeColors(strokeColors);
   }
 
   @Override
@@ -95,8 +95,8 @@ public class ProgressView extends View {
    * Start showing progress.
    */
   public void start() {
-    if (circularProgressDrawable != null) {
-      circularProgressDrawable.start();
+    if (getCircularProgressDrawable() != null) {
+      getCircularProgressDrawable().start();
       isStart = true;
     }
   }
@@ -105,8 +105,8 @@ public class ProgressView extends View {
    * Stop showing progress.
    */
   public void stop() {
-    if (circularProgressDrawable != null && isStart) {
-      circularProgressDrawable.stop();
+    if (getCircularProgressDrawable() != null && isStart) {
+      getCircularProgressDrawable().stop();
       isStart = false;
     }
   }
