@@ -36,6 +36,10 @@ public class ProgressView extends View {
     return circularProgressDrawable;
   }
 
+  public void setProgress(int progress) {
+    getCircularProgressDrawable().setInitialProgress(progress);
+  }
+
   public void setAutoStart(boolean autoStart) {
     isAutoStart = autoStart;
   }

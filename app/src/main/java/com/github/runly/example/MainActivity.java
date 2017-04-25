@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     progress4.setStrokeSizePx(90);
     progress4.setStrokeColors(new int[] {Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW});
     progress4.start();
+    progress4.setProgress(75);
 
     handler = new Handler();
     runnable = new Runnable() {

@@ -227,6 +227,16 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     this.mStrokeColors = mStrokeColors;
   }
 
+  public void setInitialProgress(int progress) {
+    if (mProgressMode != ProgressView.MODE_DETERMINATE) {
+      throw new IllegalStateException("Set progress is allowed only in determinate progress views");
+    }
+
+    progress = mReverse ? 100 - progress : progress;
+    mInitialAngle = ((progress * 360) / 100) % 360;
+    resetAnimation();
+  }
+
   @Override
   public void setAlpha(int alpha) {
     mPaint.setAlpha(alpha);

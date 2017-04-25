@@ -45,9 +45,9 @@
 
         <com.github.runly.circularprogressview.ProgressView
             android:id="@+id/progress3"
-            app:cpd_circleBackgroundColor="@color/colorAccent"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            app:cpd_circleBackgroundColor="@color/colorAccent"
             />
 
         <com.github.runly.circularprogressview.ProgressView
@@ -56,12 +56,12 @@
             android:layout_height="100dp"
             android:layout_marginLeft="48dp"
             android:layout_marginStart="48dp"
-            app:cpd_reverse="true"
-            app:cpd_inverted="true"
             app:cpd_automaticallyRestart="true"
-            app:cpd_rotateDuration="10000"
-            app:pv_progressMode="determinate"
             app:cpd_circleBackgroundColor="@color/colorAccent"
+            app:cpd_inverted="false"
+            app:cpd_reverse="false"
+            app:cpd_rotateDuration="15000"
+            app:pv_progressMode="determinate"
             />
 
     </LinearLayout>
