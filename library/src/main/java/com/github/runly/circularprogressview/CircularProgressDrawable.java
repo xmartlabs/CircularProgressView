@@ -208,11 +208,12 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       mCircleBackgroundPaint.setStyle(Paint.Style.STROKE);
       canvas.drawArc(mRect, 0, 360, false, mCircleBackgroundPaint);
       if (mProgressMode == ProgressView.MODE_DETERMINATE && mKeepDeterminateProgress) {
-        float angle = mStartAngle;
+        float endAngle = mStartAngle;
         if (mInverted) {
-          angle = mStartAngle < 0 ? 360 + mStartAngle : mStartAngle - 360;
+          endAngle += mReverse ? 360 : -360;
         }
-        canvas.drawArc(mRect, 270, angle, false, mPaint);
+        int startAngle = mReverse ? 270 : -90;
+        canvas.drawArc(mRect, startAngle, endAngle, false, mPaint);
       } else {
         canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
       }
@@ -232,8 +233,10 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       throw new IllegalStateException("Set progress is allowed only in determinate progress views");
     }
 
-    progress = mReverse ? 100 - progress : progress;
     mInitialAngle = ((progress * 360) / 100) % 360;
+    if (mReverse) {
+      mInitialAngle *= -1;
+    }
     resetAnimation();
   }
 
