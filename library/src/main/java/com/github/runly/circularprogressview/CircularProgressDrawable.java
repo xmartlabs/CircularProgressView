@@ -129,6 +129,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
   }
 
   private void drawIndeterminate(Canvas canvas) {
+    canvas.drawCircle(mRect.centerX(), mRect.centerY(), mRect.height() / 2 - mPadding * 2, mCircleInsidePaint);
     if (mRunState == RUN_STATE_STARTING) {
       Rect bounds = getBounds();
       float x = (bounds.left + bounds.right) / 2f;
@@ -205,7 +206,6 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       float x = (bounds.left + bounds.right) / 2f;
       float y = (bounds.top + bounds.bottom) / 2f;
 
-      canvas.drawCircle(mRect.centerX(), mRect.centerY(), radius, mCircleInsidePaint);
       mRect.set(x - radius, y - radius, x + radius, y + radius);
       mPaint.setStrokeWidth(mStrokeSize);
       mPaint.setStyle(Paint.Style.STROKE);
