@@ -40,6 +40,8 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
   private Paint mPaint;
   private Paint mCircleBackgroundPaint;
+  private Paint mCircleInsidePaint;
+  private int mCircleInsideColor;
   private RectF mRect;
   private float mStartAngle;
   private float mSweepAngle;
@@ -63,7 +65,6 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
   private boolean mKeepDeterminateProgress;
   private boolean mAutomaticallyRestart;
   private boolean mInverted;
-  private int mCircleBackgraondColor;
   private Interpolator mTransformInterpolator;
 
   private CircularProgressDrawable(int padding, float initialAngle, float maxSweepAngle, float minSweepAngle,
@@ -72,7 +73,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
                                    Interpolator transformInterpolator, int progressMode, int inAnimDuration,
                                    float inStepPercent, int[] inStepColors, int outAnimDuration,
                                    boolean keepDeterminateProgress, boolean automaticallyRestart,
-                                   int circleBackgroundColor, boolean inverted) {
+                                   int circleBackgroundColor, boolean inverted, int circleInsideColor) {
     mPadding = padding;
     mInitialAngle = initialAngle;
     mMaxSweepAngle = maxSweepAngle;
@@ -88,7 +89,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     mKeepDeterminateProgress = keepDeterminateProgress;
     mAutomaticallyRestart = automaticallyRestart;
     mInverted = inverted;
-    mCircleBackgraondColor = circleBackgroundColor;
+    mCircleInsideColor = circleInsideColor;
     mInAnimationDuration = inAnimDuration;
     mInStepPercent = inStepPercent;
     mInColors = inStepColors;
@@ -103,6 +104,10 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     mCircleBackgroundPaint.setStrokeCap(Paint.Cap.ROUND);
     mCircleBackgroundPaint.setStrokeJoin(Paint.Join.ROUND);
     mCircleBackgroundPaint.setColor(circleBackgroundColor);
+
+    mCircleInsidePaint = new Paint();
+    mCircleInsidePaint.setAntiAlias(true);
+    mCircleInsidePaint.setColor(circleInsideColor);
 
     mRect = new RectF();
   }
@@ -200,6 +205,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       float x = (bounds.left + bounds.right) / 2f;
       float y = (bounds.top + bounds.bottom) / 2f;
 
+      canvas.drawCircle(mRect.centerX(), mRect.centerY(), radius, mCircleInsidePaint);
       mRect.set(x - radius, y - radius, x + radius, y + radius);
       mPaint.setStrokeWidth(mStrokeSize);
       mPaint.setStyle(Paint.Style.STROKE);
@@ -486,6 +492,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     private int mOutAnimationDuration;
     private boolean mKeepDeterminateProgress;
     private int mCircleBackgroundColor;
+    private int mCircleInsideColor;
     private boolean mAutomaticallyRestart;
     private boolean mInverted;
 
@@ -518,6 +525,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       automaticallyRestart(a.getBoolean(R.styleable.CircularProgressDrawable_cpd_automaticallyRestart, false));
       inverted(a.getBoolean(R.styleable.CircularProgressDrawable_cpd_inverted, false));
       circleBackgraondColor(a.getColor(R.styleable.CircularProgressDrawable_cpd_circleBackgroundColor, 0));
+      circleInsideColor(a.getInt(R.styleable.CircularProgressDrawable_android_background, context.getResources().getColor(android.R.color.transparent)));
       transformDuration(a.getInteger(R.styleable.CircularProgressDrawable_cpd_transformDuration, context.getResources().getInteger(android.R.integer.config_mediumAnimTime)));
       keepDuration(a.getInteger(R.styleable.CircularProgressDrawable_cpd_keepDuration, context.getResources().getInteger(android.R.integer.config_shortAnimTime)));
       if ((resId = a.getResourceId(R.styleable.CircularProgressDrawable_cpd_transformInterpolator, 0)) != 0) {
@@ -555,7 +563,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
       return new CircularProgressDrawable(mPadding, mInitialAngle, mMaxSweepAngle, mMinSweepAngle, mStrokeSize,
           mStrokeColors, mReverse, mRotateDuration, mTransformDuration, mKeepDuration,
           mTransformInterpolator, mProgressMode, mInAnimationDuration, mInStepPercent, mInColors, mOutAnimationDuration,
-          mKeepDeterminateProgress, mAutomaticallyRestart, mCircleBackgroundColor, mInverted);
+          mKeepDeterminateProgress, mAutomaticallyRestart, mCircleBackgroundColor, mInverted, mCircleInsideColor);
     }
 
     public Builder padding(int padding) {
@@ -584,6 +592,11 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
     public Builder circleBackgraondColor(int circleBackgroundColor) {
       mCircleBackgroundColor = circleBackgroundColor;
+      return this;
+    }
+
+    public Builder circleInsideColor(int circleInsideColor) {
+      mCircleInsideColor = circleInsideColor;
       return this;
     }
 

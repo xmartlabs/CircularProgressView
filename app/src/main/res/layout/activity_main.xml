@@ -66,4 +66,18 @@
 
     </LinearLayout>
 
+    <com.github.runly.circularprogressview.ProgressView
+        android:id="@+id/progress5"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@android:color/black"
+        android:layout_marginTop="15dp"
+        app:cpd_automaticallyRestart="true"
+        app:cpd_circleBackgroundColor="@android:color/transparent"
+        app:cpd_inverted="false"
+        app:cpd_reverse="false"
+        app:cpd_rotateDuration="15000"
+        app:pv_progressMode="determinate"
+        />
+
 </LinearLayout>

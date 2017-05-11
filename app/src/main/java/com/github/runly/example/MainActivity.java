@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
   private ProgressView progress2;
   private ProgressView progress3;
   private ProgressView progress4;
+  private ProgressView progress5;
   private Handler handler;
   private Runnable runnable;
   private boolean isStart = true;
@@ -38,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
     progress4.setStrokeColors(new int[] {Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW});
     progress4.start();
     progress4.setProgress(25);
+
+    progress5 = (ProgressView) findViewById(R.id.progress5);
+    progress5.setStrokeSizePx(20);
+    progress5.setStrokeColors(new int[] {Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW});
+    progress5.start();
+    progress5.setProgress(25);
 
     handler = new Handler();
     runnable = new Runnable() {

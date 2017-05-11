@@ -1,6 +1,7 @@
 <resources>
 
     <style name="CircularProgress">
+        <item name="android:background">@android:color/transparent</item>
         <item name="cpd_automaticallyRestart">false</item>
         <item name="cpd_inAnimDuration">0</item>
         <item name="cpd_initialAngle">0</item>
