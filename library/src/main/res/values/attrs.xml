@@ -7,6 +7,7 @@
     </attr>
 
     <declare-styleable name="CircularProgressDrawable">
+        <attr name="android:background" />
         <attr format="boolean" name="cpd_automaticallyRestart" />
         <attr format="boolean" name="cpd_keepDeterminateProgress" />
         <attr format="boolean" name="cpd_reverse" />
@@ -28,7 +29,6 @@
         <attr format="reference|integer" name="cpd_outAnimDuration" />
         <attr format="reference|integer" name="cpd_rotateDuration" />
         <attr format="reference|integer" name="cpd_transformDuration" />
-        <attr name="android:background" />
         <attr name="pv_progressMode" />
     </declare-styleable>
 

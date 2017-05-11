@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     progress4.start();
     progress4.setProgress(25);
 
-    progress5= (ProgressView) findViewById(R.id.progress5);
+    progress5 = (ProgressView) findViewById(R.id.progress5);
     progress5.setStrokeSizePx(20);
     progress5.setStrokeColors(new int[] {Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW});
     progress5.start();
