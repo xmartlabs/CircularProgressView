@@ -28,6 +28,7 @@
         <attr format="reference|integer" name="cpd_outAnimDuration" />
         <attr format="reference|integer" name="cpd_rotateDuration" />
         <attr format="reference|integer" name="cpd_transformDuration" />
+        <attr name="android:background" />
         <attr name="pv_progressMode" />
     </declare-styleable>
 

@@ -19,6 +19,7 @@
         <item name="cpd_transformDuration">600</item>
         <item name="cpd_transformInterpolator">@android:anim/decelerate_interpolator</item>
         <item name="pv_progressMode">indeterminate</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>
