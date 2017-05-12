@@ -37,6 +37,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
   private static final int RUN_STATE_STARTED = 2;
   private static final int RUN_STATE_RUNNING = 3;
   private static final int RUN_STATE_STOPPING = 4;
+  private static final int RUN_STATE_PAUSED = 5;
 
   private Paint mPaint;
   private Paint mCircleBackgroundPaint;
@@ -199,7 +200,31 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
         canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
       }
-    } else if (mRunState != RUN_STATE_STOPPED) {
+    } else if (isPaused()) {
+      Rect bounds = getBounds();
+      float radius = (Math.min(bounds.width(), bounds.height()) - mPadding * 2 - mStrokeSize) / 2f;
+      float x = (bounds.left + bounds.right) / 2f;
+      float y = (bounds.top + bounds.bottom) / 2f;
+
+      canvas.drawCircle(mRect.centerX(), mRect.centerY(), radius, mCircleInsidePaint);
+      mRect.set(x - radius, y - radius, x + radius, y + radius);
+      mPaint.setStrokeWidth(mStrokeSize);
+      mPaint.setStyle(Paint.Style.STROKE);
+      mPaint.setColor(getIndeterminateStrokeColor());
+      mCircleBackgroundPaint.setStrokeWidth(mStrokeSize);
+      mCircleBackgroundPaint.setStyle(Paint.Style.STROKE);
+      canvas.drawArc(mRect, 0, 360, false, mCircleBackgroundPaint);
+      if (mProgressMode == ProgressView.MODE_DETERMINATE && mKeepDeterminateProgress) {
+        float endAngle = mStartAngle;
+        if (mInverted) {
+          endAngle += mReverse ? 360 : -360;
+        }
+        int startAngle = mReverse ? 270 : -90;
+        canvas.drawArc(mRect, startAngle, endAngle, false, mPaint);
+      } else {
+        canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
+      }
+    } else if (!isStopped()) {
       Rect bounds = getBounds();
       float radius = (Math.min(bounds.width(), bounds.height()) - mPadding * 2 - mStrokeSize) / 2f;
       float x = (bounds.left + bounds.right) / 2f;
@@ -279,9 +304,36 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     stop(mOutAnimationDuration > 0);
   }
 
+  public void pauseUnpause() {
+    if (isRunning()) {
+      pause();
+    } else {
+      unpause();
+    }
+  }
+
+  private void unpause() {
+    mLastUpdateTime = SystemClock.uptimeMillis();
+    mLastProgressStateTime = mLastUpdateTime;
+    mStrokeColorIndex = 0;
+    mSweepAngle = mReverse ? -mMinSweepAngle : mMinSweepAngle;
+    scheduleSelf(mUpdater, SystemClock.uptimeMillis() + ViewUtil.FRAME_DURATION);
+    invalidateSelf();
+    mRunState = RUN_STATE_RUNNING;
+  }
+
+  private void pause() {
+    mRunState = RUN_STATE_PAUSED;
+    invalidateSelf();
+  }
+
   private void start(boolean withAnimation) {
     if (isRunning()) {
       return;
+    }
+
+    if (isPaused()) {
+      mRunState = RUN_STATE_STOPPED;
     }
 
     resetAnimation();
@@ -296,9 +348,17 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     invalidateSelf();
   }
 
+  private boolean isPaused() {
+    return mRunState == RUN_STATE_PAUSED;
+  }
+
   private void stop(boolean withAnimation) {
-    if (!isRunning()) {
+    if (isStopped()) {
       return;
+    }
+
+    if (isPaused()) {
+      mRunState = RUN_STATE_STARTED;
     }
 
     if (withAnimation) {
@@ -317,7 +377,11 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
   @Override
   public boolean isRunning() {
-    return mRunState != RUN_STATE_STOPPED;
+    return !isStopped() && mRunState != RUN_STATE_PAUSED;
+  }
+
+  private boolean isStopped() {
+    return mRunState == RUN_STATE_STOPPED;
   }
 
   @Override
@@ -349,7 +413,8 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
   }
 
   private void updateDeterminate() {
-    long curTime = SystemClock.uptimeMillis();
+    long curTime = isPaused() ? mLastUpdateTime : SystemClock.uptimeMillis();
+
     float rotateOffset = (((curTime - mLastUpdateTime) * 360f) / mRotateDuration);
     if (mReverse) {
       rotateOffset = -rotateOffset;
@@ -380,7 +445,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
   private void updateIndeterminate() {
     //update animation
-    long curTime = SystemClock.uptimeMillis();
+    long curTime = isPaused() ? mLastUpdateTime : SystemClock.uptimeMillis();
     float rotateOffset = (curTime - mLastUpdateTime) * 360f / mRotateDuration;
     if (mReverse) {
       rotateOffset = -rotateOffset;
