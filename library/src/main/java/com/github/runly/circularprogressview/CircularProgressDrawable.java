@@ -288,7 +288,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     }
   }
 
-  private void unpause() {
+  public void unpause() {
     mLastUpdateTime = SystemClock.uptimeMillis();
     mLastProgressStateTime = mLastUpdateTime;
     mStrokeColorIndex = 0;
@@ -298,7 +298,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
     mRunState = RUN_STATE_RUNNING;
   }
 
-  private void pause() {
+  public void pause() {
     mRunState = RUN_STATE_PAUSED;
     invalidateSelf();
   }
