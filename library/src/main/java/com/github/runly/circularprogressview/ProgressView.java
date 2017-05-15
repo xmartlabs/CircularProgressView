@@ -125,6 +125,24 @@ public class ProgressView extends View {
   }
 
   /**
+   * Pause progress.
+   */
+  public void pause() {
+    if (getCircularProgressDrawable() != null && isStart) {
+      getCircularProgressDrawable().pause();
+    }
+  }
+
+  /**
+   * Unpause progress.
+   */
+  public void unpause() {
+    if (getCircularProgressDrawable() != null && isStart) {
+      getCircularProgressDrawable().unpause();
+    }
+  }
+
+  /**
    * convert dip tp px
    */
   private int dipToPixels(Context context, float dipValue) {
