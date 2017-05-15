@@ -200,31 +200,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
 
         canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
       }
-    } else if (isPaused()) {
-      Rect bounds = getBounds();
-      float radius = (Math.min(bounds.width(), bounds.height()) - mPadding * 2 - mStrokeSize) / 2f;
-      float x = (bounds.left + bounds.right) / 2f;
-      float y = (bounds.top + bounds.bottom) / 2f;
-
-      canvas.drawCircle(mRect.centerX(), mRect.centerY(), radius, mCircleInsidePaint);
-      mRect.set(x - radius, y - radius, x + radius, y + radius);
-      mPaint.setStrokeWidth(mStrokeSize);
-      mPaint.setStyle(Paint.Style.STROKE);
-      mPaint.setColor(getIndeterminateStrokeColor());
-      mCircleBackgroundPaint.setStrokeWidth(mStrokeSize);
-      mCircleBackgroundPaint.setStyle(Paint.Style.STROKE);
-      canvas.drawArc(mRect, 0, 360, false, mCircleBackgroundPaint);
-      if (mProgressMode == ProgressView.MODE_DETERMINATE && mKeepDeterminateProgress) {
-        float endAngle = mStartAngle;
-        if (mInverted) {
-          endAngle += mReverse ? 360 : -360;
-        }
-        int startAngle = mReverse ? 270 : -90;
-        canvas.drawArc(mRect, startAngle, endAngle, false, mPaint);
-      } else {
-        canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
-      }
-    } else if (!isStopped()) {
+    } else if (isPaused() || !isStopped()) {
       Rect bounds = getBounds();
       float radius = (Math.min(bounds.width(), bounds.height()) - mPadding * 2 - mStrokeSize) / 2f;
       float x = (bounds.left + bounds.right) / 2f;
